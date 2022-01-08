@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-24 11:19:06
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 11:20:21
+ * @LastEditTime: 2022-01-08 18:34:56
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/model/work.ts
  */
@@ -30,7 +30,7 @@ export interface WorkProps {
     latestPublishAt?: Date;
 }
 
-module.exports = (app: Application) => {
+const initWorkModel = (app: Application) => {
     const mongoose = app.mongoose
     const AutoIncrement = AutoIncrementFactory(mongoose)
     const WorkSchema = new Schema<WorkProps>({
@@ -52,3 +52,4 @@ module.exports = (app: Application) => {
     return mongoose.model<WorkProps>('Work', WorkSchema)
 
 }
+export default initWorkModel

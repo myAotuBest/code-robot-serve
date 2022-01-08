@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-09 16:08:04
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 10:59:36
+ * @LastEditTime: 2022-01-07 16:56:31
  * @Deprecated: 否
  * @FilePath: /code-robot-server/config/plugin.ts
  */
@@ -40,6 +40,10 @@ const plugin: EggPlugin = {
   cors: {
     enable: true,
     package: 'egg-cors'
+  },
+  oss: {
+    enable: true,
+    package: 'egg-oss'
   },
 };
 
