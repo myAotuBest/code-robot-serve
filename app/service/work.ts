@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-24 11:46:26
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-29 10:27:54
+ * @LastEditTime: 2022-01-09 16:35:04
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/service/work.ts
  */
@@ -61,7 +61,10 @@ export default class WorkService extends Service {
             ...(isTemplate && { isTemplate: true })
         }
         const res = await app.model.Work.findOneAndUpdate({ id }, payload, { new: true })
-        const { uuid } = res
-        return `${H5BaseURL}/p/${id}-${uuid}`
+        if (res) {
+            const { uuid } = res
+            return `${H5BaseURL}/p/${id}-${uuid}`
+        }
+        return `${H5BaseURL}/p/${id}`
     }
 }

@@ -5,7 +5,7 @@
  * @Github: @163.com
  * @Date: 2021-12-09 16:08:04
  * @LastEditors: Roy
- * @LastEditTime: 2022-01-07 22:43:36
+ * @LastEditTime: 2022-01-09 15:17:49
  * @Deprecated: 否
  * @FilePath: /code-robot-server/config/config.default.ts
  */
@@ -46,7 +46,7 @@ export default (appInfo: EggAppInfo) => {
     secret: '1234567890',
     enable: true,
     //匹配需要校验的路由 /api/works/**
-    match: ['/api/users/getUserInfo', '/api/works']
+    match: ['/api/users/getUserInfo', '/api/works', '/api/channels']
   }
   config.redis = {
     client: {

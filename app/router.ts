@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-09 16:08:04
  * @LastEditors: Roy
- * @LastEditTime: 2022-01-08 15:29:26
+ * @LastEditTime: 2022-01-09 15:52:58
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/router.ts
  */
@@ -40,4 +40,9 @@ export default (app: Application) => {
 
   router.post('/utils/upload-img', controller.utils.uploadMutipleFiles)
   router.get('/utils/page/:idAndUuid', controller.utils.renderToH5Page)
+
+  router.post('/channels/create', controller.work.createChannel)
+  router.get('/channels/getWorkChannel/:id', controller.work.getWorkChannel)
+  router.patch('/channels/updateName/:id', controller.work.updateChannelName)
+  router.delete('/channels/:id', controller.work.deleteChannel)
 };

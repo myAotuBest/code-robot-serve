@@ -5,15 +5,20 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-24 11:42:14
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 17:00:23
+ * @LastEditTime: 2022-01-09 17:26:59
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/controller/work.ts
  */
 import { Controller } from 'egg'
+import { nanoid } from "nanoid"
 import checkPermission from "../decorator/checkPermission"
 import validateInput from "../decorator/inputValidate"
 const workCreateRules = {
     title: 'string',
+}
+const channelCreateRules = {
+    name: 'string',
+    workId: 'number'
 }
 export const workErrorMessages = {
     workValidateFail: {
@@ -34,6 +39,58 @@ export interface IndexCondition {
 
 
 export default class WorkController extends Controller {
+
+    @validateInput(channelCreateRules, 'channelValidateFail')
+    @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissonFail', { value: { type: 'body', valueKey: 'workId' } })
+    async createChannel() {
+        const { ctx, app } = this
+        const { name, workId } = ctx.request.body
+        const newChannel = {
+            name,
+            id: nanoid(6)
+        }
+        const res = await app.model.Work.findOneAndUpdate({ id: workId }, { $push: { channels: newChannel } })
+        if (res) {
+            ctx.helper.success({ ctx, res: newChannel })
+        } else {
+            ctx.helper.error({ ctx, errnoType: 'channelOperateFail' })
+        }
+    }
+    @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissonFail')
+    async getWorkChannel() {
+        const { ctx, app } = this
+        const { id } = ctx.params
+        const certianWork = await app.model.Work.findOne({ id })
+        if (certianWork) {
+            const { channels } = certianWork
+            ctx.helper.success({ ctx, res: { count: channels && channels.length || 0, list: channels || [] } })
+        } else {
+            ctx.helper.error({ ctx, errnoType: 'channelOperateFail' })
+        }
+    }
+    @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissonFail', { key: 'channels.id' })
+    async updateChannelName() {
+        const { ctx, app } = this
+        const { id } = ctx.params
+        const { name } = ctx.request.body
+        const res = await app.model.Work.findOneAndUpdate({ 'channels.id': id }, { $set: { 'channels.$.name': name } })
+        if (res) {
+            ctx.helper.success({ ctx, res: { name } })
+        } else {
+            ctx.helper.error({ ctx, errnoType: 'channelOperateFail' })
+        }
+    }
+    @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissonFail', { key: 'channels.id' })
+    async deleteChannel() {
+        const { ctx, app } = this
+        const { id } = ctx.params
+        const work = await app.model.Work.findOneAndUpdate({ 'channels.id': id }, { $pull: { channels: { id } } }, { new: true })
+        if (work) {
+            ctx.helper.success({ ctx, res: work })
+        } else {
+            ctx.helper.error({ ctx, errnoType: 'channelOperateFail' })
+        }
+    }
     // private validateUserInput(rules: any) {
     //     const { ctx, app } = this
     //     // ctx.validate(userCreateRules)
@@ -42,6 +99,7 @@ export default class WorkController extends Controller {
     //     return errors
     // }
     @validateInput(workCreateRules, 'workValidateFail')
+    @checkPermission('Work', 'workNoPermissonFail')
     async createWork() {
         const { ctx, service } = this
         // const errors = this.validateUserInput(workCreateRules)
@@ -118,7 +176,7 @@ export default class WorkController extends Controller {
         const res = await this.app.model.Work.findOneAndDelete({ id }).select('_id id title').lean()
         ctx.helper.success({ ctx, res })
     }
-    @checkPermission('Work', 'workNoPermissonFail')
+    @checkPermission('Work', 'workNoPermissonFail', { action: 'publish' })
     async publish(isTemplate: boolean) {
         const { ctx } = this
         const url = await this.service.work.publish(ctx.params.id, isTemplate)

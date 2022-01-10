@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-24 11:19:06
  * @LastEditors: Roy
- * @LastEditTime: 2022-01-08 18:34:56
+ * @LastEditTime: 2022-01-09 15:09:56
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/model/work.ts
  */
@@ -13,6 +13,10 @@ import { Application } from 'egg'
 import { ObjectId, Schema } from 'mongoose'
 import * as AutoIncrementFactory from 'mongoose-sequence'
 
+interface ChannelProps {
+    name: string;
+    id: string;
+}
 export interface WorkProps {
     id?: number;
     uuid: string;
@@ -28,6 +32,7 @@ export interface WorkProps {
     status?: 0 | 1 | 2;
     user: ObjectId;
     latestPublishAt?: Date;
+    channels?: ChannelProps[];
 }
 
 const initWorkModel = (app: Application) => {
@@ -46,6 +51,7 @@ const initWorkModel = (app: Application) => {
         copiedCount: { type: Number, default: 0 },
         status: { type: Number, default: 1 },
         user: { type: Schema.Types.ObjectId, ref: 'User' },
+        channels: { type: Array },
         latestPublishAt: { type: Date },
     }, { timestamps: true })
     WorkSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'works_id_counter' })

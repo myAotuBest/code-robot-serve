@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-10 17:26:11
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 10:59:23
+ * @LastEditTime: 2022-01-09 16:24:58
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/model/user.ts
  */
@@ -24,6 +24,7 @@ export interface UserProps {
     type: 'email' | 'cellphone' | 'oauth';
     provider?: 'gitee';
     oauthID?: string;
+    role?: 'admin' | 'normal';
 }
 
 function initUserModel(app: Application) {
@@ -38,6 +39,7 @@ function initUserModel(app: Application) {
         type: { type: String, default: 'email' },
         provider: { type: String },
         oauthID: { type: String },
+        role: { type: String, default: 'normal' },
     }, {
         timestamps: true,
         toJSON: {
