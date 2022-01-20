@@ -5,7 +5,7 @@
  * @Github: @163.com
  * @Date: 2021-12-09 16:08:04
  * @LastEditors: Roy
- * @LastEditTime: 2022-01-09 15:17:49
+ * @LastEditTime: 2022-01-20 14:28:09
  * @Deprecated: 否
  * @FilePath: /code-robot-server/config/config.default.ts
  */
@@ -26,6 +26,7 @@ export default (appInfo: EggAppInfo) => {
     csrf: {
       enable: false,
     },
+    domainWhiteList: ['http://localhost:8080'],
   };
   config.view = {
     defaultViewEngine: 'nunjucks'
@@ -69,10 +70,10 @@ export default (appInfo: EggAppInfo) => {
       { prefix: '/uploads', dir: join(appInfo.baseDir, 'uploads') }
     ]
   }
-  config.cors = {
-    origin: 'http://localhost:8080',
-    allowMethods: 'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
-  }
+  // config.cors = {
+  //   origin: 'http://localhost:8080',
+  //   allowMethods: 'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH'
+  // }
   config.oss = {
     client: {
       accessKeyId: process.env.ALC_ACCESS_KEY || '',
@@ -103,7 +104,8 @@ export default (appInfo: EggAppInfo) => {
     baseUrl: 'default.url',
     aliCloudConfig,
     giteeOauthConfig,
-    H5BaseURL: 'http://localhost:7001/api/pages'
+    H5BaseURL: 'http://localhost:7001/api/pages',
+    jwtExpires: '1h'
   };
 
   // the return config will combines to EggAppConfig

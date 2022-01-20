@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-16 14:50:58
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 15:25:56
+ * @LastEditTime: 2022-01-20 14:29:58
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/controller/user.ts
  */
@@ -99,7 +99,7 @@ export default class HomeController extends Controller {
         }
         // ctx.cookies.set('username', user.username, { encrypt: true });
         // ctx.session.username = user.username;
-        const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret, { expiresIn: 60 * 60 })
+        const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires })
         ctx.helper.success({ ctx, res: { token }, msg: '登录成功' })
 
     }

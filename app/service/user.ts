@@ -5,7 +5,7 @@
  * @Github: cx_love_xc@163.com
  * @Date: 2021-12-16 14:52:09
  * @LastEditors: Roy
- * @LastEditTime: 2021-12-24 11:50:30
+ * @LastEditTime: 2022-01-20 14:29:31
  * @Deprecated: 否
  * @FilePath: /code-robot-server/app/service/user.ts
  */
@@ -44,7 +44,7 @@ export default class UserService extends Service {
         const user = await this.findByUserName(phoneNumber);
         //判断用户是否存在
         if (user) {
-            const token = await app.jwt.sign({ username: user.username, _id: user._id }, app.config.jwt.secret);
+            const token = await app.jwt.sign({ username: user.username, _id: user._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
             return token;
         }
         //如果不存在，创建一个用户
@@ -55,7 +55,7 @@ export default class UserService extends Service {
             type: 'cellphone'
         }
         const newUser = await app.model.User.create(newCreatedData);
-        const token = await app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret);
+        const token = await app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
         return token;
     }
     //发送短信
@@ -114,7 +114,7 @@ export default class UserService extends Service {
         // 假如已经存在
         const existUser = await this.findByUserName(`Gitee${stringId}`)
         if (existUser) {
-            const token = app.jwt.sign({ username: existUser.username, _id: existUser._id }, app.config.jwt.secret)
+            const token = app.jwt.sign({ username: existUser.username, _id: existUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires })
             return token
         }
         // 假如不存在，新建用户
@@ -128,7 +128,7 @@ export default class UserService extends Service {
             type: 'oauth'
         }
         const newUser = await app.model.User.create(userCreatedData)
-        const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret)
+        const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires })
 
         return token
     }
