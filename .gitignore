@@ -10,7 +10,7 @@ logs/
 *.swp
 *.lock
 !.autod.conf.js
-.env
+
 
 app/**/*.js
 test/**/*.js
@@ -18,4 +18,5 @@ config/**/*.js
 app/**/*.map
 test/**/*.map
 config/**/*.map
-
+.docker-volumes/
+.env

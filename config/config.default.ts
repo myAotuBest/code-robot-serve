@@ -5,7 +5,7 @@
  * @Github: @163.com
  * @Date: 2021-12-09 16:08:04
  * @LastEditors: Roy
- * @LastEditTime: 2022-01-20 14:28:09
+ * @LastEditTime: 2022-01-20 17:03:50
  * @Deprecated: 否
  * @FilePath: /code-robot-server/config/config.default.ts
  */
@@ -36,6 +36,10 @@ export default (appInfo: EggAppInfo) => {
   };
   config.mongoose = {
     url: 'mongodb://localhost:27017/robot',
+    options: {
+      user: 'roy',
+      pass: '123456',
+    }
   };
   config.bcrypt = {
     saltRounds: 10
