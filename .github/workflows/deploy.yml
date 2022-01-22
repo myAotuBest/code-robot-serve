@@ -35,16 +35,22 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           source: 'code-robot-server'
           target: '~'
-      # 使用阿里云ACR完成docekr login
-      - name: Login to Aliyun Container Registry(ACR)
-        uses: aliyun/acr-login@v1
+      # 通过 SSH 登录然后重启服务
+      - name: executing ssh and restart docker
+        uses: appleboy/ssh-action@master
         with:
-          login-server: https://registry.cn-qingdao.aliyuncs.com
-          region-id: cn-qingdao
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      # 使用正确的阿里云tag进行docker build
-      - name: Build image for docker 
-        run: docker build --tag "registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1"
-      - name: Push Image to ACR 
-        run: docker pull registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script_stop: true
+          # * 登录阿里云 ACR
+          # 停止服务 docker-compose down
+          # 启动服务 docker-compose up 
+          # 清理工作
+          script: |
+            docker login --username=${{secrets.ACR_USERNAME}} --password=${{secrets.ACR_PASSWORD}} registry.cn-qingdao.aliyuncs.com
+            cd ~/code-robot-server/
+            docker-compose -f docker-compose-online.yml down
+            docker-compose -f docker-compose-online.yml up -d
+            rm -rf .env
+            docker logout registry.cn-qingdao.aliyuncs.com
