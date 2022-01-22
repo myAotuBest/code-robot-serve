@@ -20,7 +20,7 @@ services:
     env_file:
       - .env
   code-robot-server:
-    image: registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:{{tag}}
+    image: registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1
     container_name: code-robot-server
     ports:
       - 7002:7001
