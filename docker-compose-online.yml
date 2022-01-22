@@ -1,0 +1,28 @@
+version: '3'
+services:
+  code-robot-mongo:
+    image: mongo
+    container_name: code-robot-mongo
+    volumes:
+      - '.docker-volumes/mongo/data:/data/db'
+      - '$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/'
+    ports:
+      - 27018:27017
+    env_file:
+      - .env
+  code-robot-redis:
+    image: redis
+    container_name: code-robot-redis
+    # command: >
+    #   --requirepass ${REDIS_PASSWORD}
+    ports:
+      - 6378:6379
+    env_file:
+      - .env
+  code-robot-server:
+    image: registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:{{tag}}
+    container_name: code-robot-server
+    ports:
+      - 7002:7001
+    env_file:
+      - .env

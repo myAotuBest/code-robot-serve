@@ -1,0 +1,26 @@
+name: 自动部署新版本到服务器
+on: [push]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout 代码
+      - uses: actions/checkout@v2
+      # 创建 env 文件
+      - run: 'touch .env'
+      - run: echo echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
+      - run: echo ALC_SECRET_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
+      # 使用阿里云ACR完成docekr login
+      - name: Login to Aliyun Container Registry(ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-qingdao.aliyuncs.com
+          region-id: cn-qingdao
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      # 使用正确的阿里云tag进行docker build
+      - name: Build image for docker 
+        run: docker build --tag "registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1"
+      - name: Push Image to ACR 
+        run: docker pull registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1

@@ -1,0 +1,50 @@
+name: 自动部署新版本到服务器
+on: [push]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout 代码
+      - uses: actions/checkout@v2
+      # 创建 env 文件
+      - name: 'create env file'
+      - run: |
+        touch .env
+        echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
+        echo ALC_SECRET_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
+        echo GITEE_CID=${{ secrets.GITEE_CID }} >> .env
+        echo GITEE_SECRET=${{ secrets.GITEE_SECRET }} >> .env
+        echo MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} >> .env
+        echo MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} >> .env
+        echo MONGO_DB_USERNAME=${{ secrets.MONGO_DB_USERNAME }} >> .env
+        echo MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }} >> .env
+      # 拷贝必要文件到一个文件夹，包括 .env, docker-compose-online.yml, mongo-entrypoint
+      - name: 'copy necessary files in to one folder'
+        run: |
+          mkdir code-robot-server
+          cp .env docker-compose-online.yml code-robot-server
+          cp -r mongo-entrypoint code-robot-server
+          ls -a code-robot-server
+      # 通过 scp 拷贝必须文件到服务器
+      - name: 'copy code-robot-server folder via scp'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: 'code-robot-server'
+          target: '~'
+      # 使用阿里云ACR完成docekr login
+      - name: Login to Aliyun Container Registry(ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-qingdao.aliyuncs.com
+          region-id: cn-qingdao
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      # 使用正确的阿里云tag进行docker build
+      - name: Build image for docker 
+        run: docker build --tag "registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1"
+      - name: Push Image to ACR 
+        run: docker pull registry.cn-qingdao.aliyuncs.com/greedcat/code-robot-server:0.0.1
