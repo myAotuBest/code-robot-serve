@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       # 创建 env 文件
       - name: 'create env file'
-      - run: |
+        run: |
         touch .env
         echo ALC_ACCESS_KEY=${{ secrets.ALC_ACCESS_KEY }} >> .env
         echo ALC_SECRET_KEY=${{ secrets.ALC_SECRET_KEY }} >> .env
