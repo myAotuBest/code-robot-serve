@@ -22,7 +22,8 @@
     "clean": "ets clean",
     "build:template:dev": "npx webpack --config webpack/webpack.config.js",
     "build:template:prod": "npx webpack --config webpack/webpack.config.js --env production && npm run upload",
-    "upload": "node webpack/uploadToOSS.js"
+    "upload": "node webpack/uploadToOSS.js",
+    "release": "release-it"
   },
   "dependencies": {
     "@alicloud/dysmsapi20170525": "^2.0.8",
@@ -71,6 +72,7 @@
     "filemanager-webpack-plugin": "^6.1.7",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.4.5",
+    "release-it": "^14.12.3",
     "tslib": "^1.9.0",
     "typescript": "^4.4.3",
     "webpack": "^5.64.4",
